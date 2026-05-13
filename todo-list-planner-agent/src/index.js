@@ -28,6 +28,9 @@ async function main() {
       agent.handleEvent(data).catch((error) => {
         console.error(error && error.stack ? error.stack : String(error));
       });
+    },
+    'card.action.trigger': async (data) => {
+      return agent.handleCardAction(data);
     }
   });
 

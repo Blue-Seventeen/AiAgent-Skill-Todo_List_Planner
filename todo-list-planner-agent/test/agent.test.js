@@ -23,6 +23,7 @@ function event(text, extraMessage = {}) {
 
 function createAgent(overrides = {}) {
   const replies = [];
+  const cards = [];
   const addCalls = [];
   const agent = new TodoFeishuAgent({
     groupTriggerWords: ['todo'],
@@ -33,6 +34,9 @@ function createAgent(overrides = {}) {
   }, {}, {
     replyText: async (_client, _messageId, text) => {
       replies.push(text);
+    },
+    replyCard: async (_client, _messageId, card) => {
+      cards.push(card);
     },
     planTask: async () => ({
       title: '提交周报',
@@ -56,21 +60,24 @@ function createAgent(overrides = {}) {
     deleteTodoRecords: async () => ({ count: 1, deletedTasks: [{ taskContent: '提交周报' }] }),
     ...overrides
   });
-  return { agent, replies, addCalls };
+  return { agent, replies, cards, addCalls };
 }
 
 test('creates a draft and confirms it into Todo', async () => {
-  const { agent, replies, addCalls } = createAgent();
+  const { agent, replies, cards, addCalls } = createAgent();
   await agent.handleEvent(event('明天 10 点提醒我提交周报'));
 
   assert.equal(replies[0], '已收到，正在规划 Todo 草稿。');
-  assert.match(replies[1], /草稿 draft_/);
-  const draftId = replies[1].match(/草稿 (draft_[^\s]+) 已生成/)[1];
+  assert.equal(cards.length, 1);
+  assert.equal(cards[0].header.title.content, 'Todo 草稿待确认');
+  const draftId = cards[0].elements
+    .find((item) => item.tag === 'action')
+    .actions[0].value.draftId;
 
   await agent.handleEvent(event(`确认 ${draftId}`));
   assert.equal(addCalls.length, 1);
   assert.equal(addCalls[0].title, '提交周报');
-  assert.match(replies[2], /operationId：op_1/);
+  assert.match(replies[1], /operationId：op_1/);
 });
 
 test('does not write Todo when planning fails', async () => {
@@ -92,7 +99,7 @@ test('deletes Todo records through command', async () => {
 });
 
 test('keeps planning when image download fails', async () => {
-  const { agent, replies } = createAgent({
+  const { agent, cards } = createAgent({
     downloadImages: async () => ({
       saved: [],
       failed: [{ key: 'img_1', error: 'download failed' }]
@@ -102,11 +109,12 @@ test('keeps planning when image download fails', async () => {
     content: JSON.stringify({ text: '把这张图加入待办', image_key: 'img_1' })
   }));
 
-  assert.match(replies[1], /图片下载失败/);
+  assert.equal(cards.length, 1);
+  assert.deepEqual(cards[0].elements.some((item) => JSON.stringify(item).includes('图片下载失败')), true);
 });
 
 test('creates a draft for image-only message', async () => {
-  const { agent, replies } = createAgent({
+  const { agent, cards } = createAgent({
     downloadImages: async () => ({
       saved: ['image.jpg'],
       failed: []
@@ -116,6 +124,50 @@ test('creates a draft for image-only message', async () => {
     content: JSON.stringify({ image_key: 'img_1' })
   }));
 
-  assert.match(replies[1], /草稿 draft_/);
-  assert.match(replies[1], /1 张图片已下载/);
+  assert.equal(cards.length, 1);
+  assert.deepEqual(JSON.stringify(cards[0]).includes('1 张图片已下载'), true);
+});
+
+test('falls back to text draft when card sending fails', async () => {
+  const originalError = console.error;
+  console.error = () => {};
+  const { agent, replies } = createAgent({
+    replyCard: async () => {
+      throw new Error('card unavailable');
+    }
+  });
+  try {
+    await agent.handleEvent(event('明天提醒我提交周报'));
+    assert.match(replies[1], /草稿 draft_/);
+  } finally {
+    console.error = originalError;
+  }
+});
+
+test('confirms draft through card action', async () => {
+  const { agent, cards, addCalls } = createAgent();
+  await agent.handleEvent(event('明天 10 点提醒我提交周报'));
+  const draftId = cards[0].elements.find((item) => item.tag === 'action').actions[0].value.draftId;
+
+  const responseCard = await agent.handleCardAction({
+    context: { open_message_id: 'mid_card' },
+    action: { value: { action: 'confirm_draft', draftId } }
+  });
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.equal(responseCard.header.title.content, '正在写入 Todo清单');
+  assert.equal(addCalls.length, 1);
+});
+
+test('cancels draft through card action', async () => {
+  const { agent, cards } = createAgent();
+  await agent.handleEvent(event('明天 10 点提醒我提交周报'));
+  const draftId = cards[0].elements.find((item) => item.tag === 'action').actions[1].value.draftId;
+
+  const responseCard = await agent.handleCardAction({
+    action: { value: { action: 'cancel_draft', draftId } }
+  });
+
+  assert.equal(responseCard.header.title.content, 'Todo 草稿已取消');
+  assert.equal(agent.drafts.get(draftId).status, 'cancelled');
 });

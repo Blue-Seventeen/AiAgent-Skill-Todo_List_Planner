@@ -42,12 +42,35 @@ async function replyText(client, messageId, text) {
   });
 }
 
-async function startLongConnection(config, handler) {
+async function replyCard(client, messageId, card) {
+  const content = JSON.stringify(card);
+
+  if (client.im && client.im.v1 && client.im.v1.message && client.im.v1.message.reply) {
+    return client.im.v1.message.reply({
+      path: { message_id: messageId },
+      data: {
+        msg_type: 'interactive',
+        content
+      }
+    });
+  }
+
+  return client.request({
+    method: 'POST',
+    url: `/open-apis/im/v1/messages/${encodeURIComponent(messageId)}/reply`,
+    data: {
+      msg_type: 'interactive',
+      content
+    }
+  });
+}
+
+async function startLongConnection(config, handler, cardActionHandler) {
   const client = createFeishuClient(config);
   const wsClient = createWsClient(config);
-  const dispatcher = new lark.EventDispatcher({}).register({
-    'im.message.receive_v1': handler
-  });
+  const handlers = { 'im.message.receive_v1': handler };
+  if (cardActionHandler) handlers['card.action.trigger'] = cardActionHandler;
+  const dispatcher = new lark.EventDispatcher({}).register(handlers);
   await wsClient.start({ eventDispatcher: dispatcher });
   return { client, wsClient };
 }
@@ -55,6 +78,7 @@ async function startLongConnection(config, handler) {
 module.exports = {
   createFeishuClient,
   createWsClient,
+  replyCard,
   replyText,
   startLongConnection
 };

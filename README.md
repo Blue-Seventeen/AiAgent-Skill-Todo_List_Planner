@@ -127,7 +127,7 @@ npm run doctor
 npm start
 ```
 
-Agent 使用飞书长连接接收 `im.message.receive_v1`，通过 OpenAI 兼容接口生成草稿。用户回复 `确认 draft_...` 后，Agent 会调用 `todo-list-planner` 的 live 桥写入本机 Todo清单。详细配置见 [todo-list-planner-agent/README.md](todo-list-planner-agent/README.md)。
+Agent 使用飞书长连接接收 `im.message.receive_v1`，通过 OpenAI 兼容接口生成草稿，并通过 `card.action.trigger` 支持卡片按钮确认。用户也可以回复 `确认 draft_...` 作为兜底。确认后 Agent 会调用 `todo-list-planner` 的 live 桥写入本机 Todo清单。详细配置见 [todo-list-planner-agent/README.md](todo-list-planner-agent/README.md)。
 
 ## MCP 配置
 

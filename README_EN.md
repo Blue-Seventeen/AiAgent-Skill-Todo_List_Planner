@@ -127,7 +127,7 @@ npm run doctor
 npm start
 ```
 
-The Agent receives `im.message.receive_v1` through Feishu long connection mode and generates drafts through an OpenAI-compatible API. After the user replies `确认 draft_...`, the Agent calls the `todo-list-planner` live bridge to write the task to the local Todo清单 app. See [todo-list-planner-agent/README.md](todo-list-planner-agent/README.md) for setup details.
+The Agent receives `im.message.receive_v1` through Feishu long connection mode, generates drafts through an OpenAI-compatible API, and supports card-button confirmation through `card.action.trigger`. Users can still reply `确认 draft_...` as a fallback. After confirmation, the Agent calls the `todo-list-planner` live bridge to write the task to the local Todo清单 app. See [todo-list-planner-agent/README.md](todo-list-planner-agent/README.md) for setup details.
 
 ## MCP Configuration
 

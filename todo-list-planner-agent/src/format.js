@@ -45,6 +45,7 @@ function formatDeleteResult(result) {
 }
 
 module.exports = {
+  list,
   formatDraft,
   formatAddResult,
   formatDeleteResult

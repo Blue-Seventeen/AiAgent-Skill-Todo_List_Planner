@@ -2,8 +2,9 @@
 
 const { DraftStore } = require('./draft-store');
 const { downloadImages } = require('./attachments');
+const { cancelledCard, draftCard, missingDraftCard, writingCard } = require('./cards');
 const { parseCommand } = require('./commands');
-const { replyText } = require('./feishu');
+const { replyCard, replyText } = require('./feishu');
 const { formatAddResult, formatDeleteResult, formatDraft } = require('./format');
 const { planTask } = require('./planner');
 const {
@@ -21,6 +22,7 @@ class TodoFeishuAgent {
     this.feishuClient = feishuClient;
     this.drafts = options.drafts || new DraftStore();
     this.planTask = options.planTask || planTask;
+    this.replyCard = options.replyCard || replyCard;
     this.replyText = options.replyText || replyText;
     this.downloadImages = options.downloadImages || downloadImages;
     this.addDraftToTodo = options.addDraftToTodo || addDraftToTodo;
@@ -96,7 +98,8 @@ class TodoFeishuAgent {
       attachmentSummary
     });
 
-    await this.safeReply(message.message_id, formatDraft(draft));
+    const sentCard = await this.safeReplyCard(message.message_id, draftCard(draft));
+    if (!sentCard) await this.safeReply(message.message_id, formatDraft(draft));
   }
 
   async confirmDraft(messageId, draftId) {
@@ -111,6 +114,28 @@ class TodoFeishuAgent {
     await this.safeReply(messageId, formatAddResult(draft, result));
   }
 
+  async confirmDraftFromCard(draftId, actionMessageId) {
+    const draft = this.drafts.get(draftId);
+    if (!draft || draft.status !== 'pending') {
+      return missingDraftCard(draftId);
+    }
+
+    this.addDraftToTodo(draft.task, this.config)
+      .then(async (result) => {
+        this.drafts.markConfirmed(draftId, result);
+        if (actionMessageId) {
+          await this.safeReply(actionMessageId, formatAddResult(draft, result));
+        }
+      })
+      .catch(async (error) => {
+        if (actionMessageId) {
+          await this.safeReply(actionMessageId, `写入失败：${truncate(error.message, 1000)}`);
+        }
+      });
+
+    return writingCard(draft);
+  }
+
   async cancelDraft(messageId, draftId) {
     const draft = this.drafts.cancel(draftId);
     if (!draft) {
@@ -118,6 +143,29 @@ class TodoFeishuAgent {
       return;
     }
     await this.safeReply(messageId, `已取消草稿：${draftId}`);
+  }
+
+  cancelDraftFromCard(draftId) {
+    const draft = this.drafts.cancel(draftId);
+    if (!draft) return missingDraftCard(draftId);
+    return cancelledCard(draftId);
+  }
+
+  async handleCardAction(data) {
+    const value = data && data.action && data.action.value ? data.action.value : {};
+    const action = value.action || value.type;
+    const draftId = value.draftId || value.draft_id;
+    const actionMessageId = data.open_message_id || (data.context && data.context.open_message_id) || '';
+
+    if (action === 'confirm_draft') {
+      return this.confirmDraftFromCard(draftId, actionMessageId);
+    }
+
+    if (action === 'cancel_draft') {
+      return this.cancelDraftFromCard(draftId);
+    }
+
+    return missingDraftCard(draftId || 'unknown');
   }
 
   async modifyDraft(messageId, conversationId, draftId, instruction) {
@@ -166,6 +214,16 @@ class TodoFeishuAgent {
       await this.replyText(this.feishuClient, messageId, text);
     } catch (error) {
       console.error(`[reply failed] ${error.stack || error.message || error}`);
+    }
+  }
+
+  async safeReplyCard(messageId, card) {
+    try {
+      await this.replyCard(this.feishuClient, messageId, card);
+      return true;
+    } catch (error) {
+      console.error(`[card reply failed] ${error.stack || error.message || error}`);
+      return false;
     }
   }
 }
