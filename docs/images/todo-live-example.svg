@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1237" height="286" viewBox="0 0 1237 286" role="img" aria-labelledby="title desc">
+  <title id="title">Todo List Planner 使用效果示例</title>
+  <desc id="desc">AI Bridge 图片附件测试日程，包含 10:00 提醒、图片附件、AI测试标签和三个子任务。</desc>
+  <rect width="1237" height="286" fill="#ffffff"/>
+  <rect x="0" y="0" width="1237" height="1" fill="#ececec"/>
+  <rect x="0" y="285" width="1237" height="1" fill="#ececec"/>
+
+  <g font-family="Microsoft YaHei, Segoe UI, Arial, sans-serif">
+    <rect x="53" y="28" width="21" height="21" rx="3" fill="none" stroke="#ff2a3d" stroke-width="2"/>
+    <text x="59" y="44" font-size="15" font-weight="600" fill="#ff2a3d">1</text>
+
+    <text x="100" y="49" font-size="21" font-weight="500" fill="#000000">AI Bridge 图片附件测试日程</text>
+    <rect x="379" y="24" width="88" height="39" rx="8" fill="#f4f7f8"/>
+    <text x="386" y="49" font-size="20" fill="#00aeb5">#AI测试</text>
+
+    <text x="100" y="88" font-size="20" fill="#9aa0a6">测试 live 模式创建任务并上传图片附件</text>
+
+    <g fill="none" stroke="#00aeb5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="112" cy="120" r="8"/>
+      <path d="M112 120 L112 114"/>
+      <path d="M112 120 L117 120"/>
+      <path d="M106 107 L102 111"/>
+      <path d="M118 107 L122 111"/>
+    </g>
+    <text x="130" y="129" font-size="22" fill="#00aeb5">10:00</text>
+
+    <g fill="none" stroke="#00aeb5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M200 113 H211 L216 118 V131 H200 Z"/>
+      <path d="M211 113 V118 H216"/>
+      <path d="M204 123 H212"/>
+      <path d="M204 127 H212"/>
+    </g>
+
+    <path d="M106 151 L112 157 L118 151" fill="none" stroke="#c7c7c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="132" y="161" font-size="15" fill="#a8adb3">收起</text>
+
+    <g fill="none" stroke="#c7c7c7" stroke-width="2">
+      <circle cx="112" cy="189" r="10"/>
+      <circle cx="112" cy="226" r="10"/>
+      <circle cx="112" cy="263" r="10"/>
+    </g>
+    <text x="134" y="195" font-size="18" fill="#202124">确认任务创建</text>
+    <text x="134" y="232" font-size="18" fill="#202124">确认附件上传</text>
+    <text x="134" y="269" font-size="18" fill="#202124">确认标签写入</text>
+  </g>
+</svg>

@@ -12,6 +12,9 @@
 .
 ├── .git/
 ├── .gitignore
+├── docs/
+│   └── images/
+│       └── todo-live-example.svg
 ├── README.md
 ├── README_EN.md
 └── todo-list-planner/
@@ -78,6 +81,14 @@ cd .\todo-list-planner
 ```powershell
 .\todo.ps1 add --mode live --title "测试任务" --desc "这是一个测试任务" --date today --remind 10:00 --difficulty medium --category "工作任务" --tags "AI整理" --subtasks "步骤1,步骤2"
 ```
+
+## 使用效果示例
+
+下面是通过该 Skill 在 Todo清单中创建图片附件测试日程后的效果：
+
+![Todo List Planner 使用效果示例](docs/images/todo-live-example.svg)
+
+示例任务包含标题、描述、10:00 提醒、图片附件、`#AI测试` 标签和 3 个子任务。
 
 ## 常用命令
 
@@ -149,3 +160,5 @@ MCP 工具包括：
   <img src="https://raw.githubusercontent.com/Blue-Seventeen/MarkTrans/main/doc/images/COMMUNITY_QQ_1.jpg" alt="QQ交流群二维码" width="220" />
   <img src="https://raw.githubusercontent.com/Blue-Seventeen/MarkTrans/main/doc/images/COMMUNITY_WECHAT_CHANNEL_1.jpg" alt="微信公众号二维码" width="220" />
 </p>
+
+以上“交流学习”内容与图片来自 [Blue-Seventeen/MarkTrans](https://github.com/Blue-Seventeen/MarkTrans)。

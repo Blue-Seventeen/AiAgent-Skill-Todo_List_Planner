@@ -12,6 +12,9 @@ The project package name remains `todo-list-planner`. The repository folder may 
 .
 ├── .git/
 ├── .gitignore
+├── docs/
+│   └── images/
+│       └── todo-live-example.svg
 ├── README.md
 ├── README_EN.md
 └── todo-list-planner/
@@ -78,6 +81,14 @@ Add a task:
 ```powershell
 .\todo.ps1 add --mode live --title "Test task" --desc "Created by Todo List Planner" --date today --remind 10:00 --difficulty medium --category "Work" --tags "AI" --subtasks "Step 1,Step 2"
 ```
+
+## Usage Example
+
+The following example shows a task created by this Skill in Todo清单:
+
+![Todo List Planner usage example](docs/images/todo-live-example.svg)
+
+The example includes a title, description, 10:00 reminder, image attachment, `#AI测试` tag, and three subtasks.
 
 ## Common Commands
 
@@ -149,3 +160,5 @@ Welcome to join the community and learning channels. More content will be update
   <img src="https://raw.githubusercontent.com/Blue-Seventeen/MarkTrans/main/doc/images/COMMUNITY_QQ_1.jpg" alt="QQ community QR code" width="220" />
   <img src="https://raw.githubusercontent.com/Blue-Seventeen/MarkTrans/main/doc/images/COMMUNITY_WECHAT_CHANNEL_1.jpg" alt="WeChat official account QR code" width="220" />
 </p>
+
+The community text and images above are from [Blue-Seventeen/MarkTrans](https://github.com/Blue-Seventeen/MarkTrans).
