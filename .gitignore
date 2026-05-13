@@ -1,0 +1,14 @@
+logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.*
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.local.*
+todo-list-planner/logs/

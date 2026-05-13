@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "todo-list-planner": {
+      "command": "node",
+      "args": [
+        "<absolute-path-to-this-skill>\\src\\mcp-server.js"
+      ]
+    }
+  }
+}

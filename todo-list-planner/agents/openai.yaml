@@ -1,0 +1,7 @@
+interface:
+  display_name: "Todo List Planner"
+  short_description: "Plan messages into local Todo清单 tasks"
+  brand_color: "#2563EB"
+  default_prompt: "Use $todo-list-planner to turn my incoming notes into Todo清单 tasks with reminders and deletion records."
+policy:
+  allow_implicit_invocation: true

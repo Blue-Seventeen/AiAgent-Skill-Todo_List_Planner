@@ -1,0 +1,17 @@
+{
+  "name": "todo-list-planner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Skill-ready local CLI/MCP planner bridge for Todo清单.",
+  "type": "commonjs",
+  "bin": {
+    "todo-ai": "./src/cli.js"
+  },
+  "scripts": {
+    "doctor": "node src/cli.js doctor",
+    "mcp": "node src/mcp-server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
