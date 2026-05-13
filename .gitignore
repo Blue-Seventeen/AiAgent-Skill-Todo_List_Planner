@@ -12,3 +12,9 @@ Thumbs.db
 .idea/
 *.local.*
 todo-list-planner/logs/
+todo-list-planner-agent/.env
+todo-list-planner-agent/.env.*
+!todo-list-planner-agent/.env.example
+todo-list-planner-agent/data/
+todo-list-planner-agent/logs/
+todo-list-planner-agent/*.log

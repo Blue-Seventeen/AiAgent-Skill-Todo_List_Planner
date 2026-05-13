@@ -1,0 +1,23 @@
+{
+  "name": "todo-list-planner-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Feishu long-connection agent for planning messages into local Todo清单 tasks.",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "doctor": "node src/doctor.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.63.1",
+    "dotenv": "^17.4.2"
+  },
+  "overrides": {
+    "axios": "^1.16.0"
+  }
+}

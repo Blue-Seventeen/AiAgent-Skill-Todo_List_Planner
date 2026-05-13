@@ -17,6 +17,10 @@ The project package name remains `todo-list-planner`. The repository folder may 
 │       └── todo-live-example.svg
 ├── README.md
 ├── README_EN.md
+├── todo-list-planner-agent/
+│   ├── README.md
+│   ├── package.json
+│   └── src/
 └── todo-list-planner/
     ├── SKILL.md
     ├── agents/
@@ -30,6 +34,8 @@ The project package name remains `todo-list-planner`. The repository folder may 
 
 `todo-list-planner/` is the distributable Skill body. Users only need this directory when installing the Skill.
 
+`todo-list-planner-agent/` is an optional Feishu bot entrypoint. It is not part of the Skill body. It runs locally, receives Feishu direct messages or group `@` messages through long connection mode, asks an OpenAI-compatible model to generate Todo drafts, and writes to the local Todo清单 app after user confirmation.
+
 ## Features
 
 - Plan tasks from natural-language input.
@@ -37,6 +43,7 @@ The project package name remains `todo-list-planner`. The repository folder may 
 - Support title, description, date, reminder, difficulty, category, subtasks, repeat rules, image attachments, and `#` tags.
 - Record every AI-created task so incorrect tasks can be deleted later.
 - Provide both CLI and MCP interfaces.
+- Optionally provide a Feishu Agent so users can trigger Todo planning without manually invoking Codex.
 
 ## Requirements
 
@@ -107,6 +114,20 @@ Command notes:
 - `features` prints the task fields currently supported by the bridge.
 - `records` lists tasks created by AI.
 - `delete` removes AI-created tasks by `recordId`, `operationId`, `taskId`, or `--last 1`.
+
+## Feishu Agent
+
+Use `todo-list-planner-agent/` when you want to plan Todo清单 tasks directly from Feishu messages:
+
+```powershell
+cd .\todo-list-planner-agent
+npm install
+Copy-Item .env.example .env
+npm run doctor
+npm start
+```
+
+The Agent receives `im.message.receive_v1` through Feishu long connection mode and generates drafts through an OpenAI-compatible API. After the user replies `确认 draft_...`, the Agent calls the `todo-list-planner` live bridge to write the task to the local Todo清单 app. See [todo-list-planner-agent/README.md](todo-list-planner-agent/README.md) for setup details.
 
 ## MCP Configuration
 

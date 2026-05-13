@@ -17,6 +17,10 @@
 │       └── todo-live-example.svg
 ├── README.md
 ├── README_EN.md
+├── todo-list-planner-agent/
+│   ├── README.md
+│   ├── package.json
+│   └── src/
 └── todo-list-planner/
     ├── SKILL.md
     ├── agents/
@@ -30,6 +34,8 @@
 
 `todo-list-planner/` 是 Skill 本体。用户下载或安装时只需要使用这个目录。
 
+`todo-list-planner-agent/` 是可选的飞书机器人入口。它不是 Skill 本体，用于在本机常驻运行，通过飞书长连接读取单聊或群聊 `@` 消息，调用 OpenAI 兼容模型生成 Todo 草稿，并在用户确认后写入本机 Todo清单。
+
 ## 能力
 
 - 从自然语言信息中规划 Todo清单任务。
@@ -37,6 +43,7 @@
 - 支持任务标题、描述、日期、提醒、难度、分类、子任务、自定义重复、图片附件和 `#` 标签。
 - 自动记录 AI 添加的任务，便于用户发现不合适时按记录删除。
 - 提供 CLI 和 MCP 两种集成方式。
+- 可选提供飞书机器人 Agent，让用户无需通过 Codex 手动触发 Skill。
 
 ## 环境要求
 
@@ -107,6 +114,20 @@ cd .\todo-list-planner
 - `features` 查看当前桥接支持的任务字段。
 - `records` 查看 AI 添加记录。
 - `delete` 按 `recordId`、`operationId`、`taskId` 或 `--last 1` 删除 AI 添加错的任务。
+
+## 飞书机器人 Agent
+
+如果希望直接在飞书里把消息规划成 Todo清单任务，可以使用根目录下的 `todo-list-planner-agent/`：
+
+```powershell
+cd .\todo-list-planner-agent
+npm install
+Copy-Item .env.example .env
+npm run doctor
+npm start
+```
+
+Agent 使用飞书长连接接收 `im.message.receive_v1`，通过 OpenAI 兼容接口生成草稿。用户回复 `确认 draft_...` 后，Agent 会调用 `todo-list-planner` 的 live 桥写入本机 Todo清单。详细配置见 [todo-list-planner-agent/README.md](todo-list-planner-agent/README.md)。
 
 ## MCP 配置
 
